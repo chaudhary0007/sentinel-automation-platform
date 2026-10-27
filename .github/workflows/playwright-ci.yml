@@ -1,0 +1,47 @@
+name: Playwright CI & Live Report Deployment
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+jobs:
+  test:
+    timeout-minutes: 15
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        working-directory: ./automation
+        run: npm ci
+
+      - name: Install Playwright Browsers
+        working-directory: ./automation
+        run: npx playwright install --with-deps chromium
+
+      - name: Run Playwright Tests
+        working-directory: ./automation
+        run: npx playwright test
+        continue-on-error: true
+
+      - name: Deploy Report to GitHub Pages
+        if: always()
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./public/playwright-report
+          publish_branch: gh-pages
