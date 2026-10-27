@@ -23,11 +23,11 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 22
 
       - name: Install dependencies
         working-directory: ./automation
-        run: npm ci
+        run: npm install
 
       - name: Install Playwright Browsers
         working-directory: ./automation
@@ -37,6 +37,9 @@ jobs:
         working-directory: ./automation
         run: npx playwright test
         continue-on-error: true
+
+      - name: Ensure report directory exists
+        run: mkdir -p public/playwright-report
 
       - name: Deploy Report to GitHub Pages
         if: always()
