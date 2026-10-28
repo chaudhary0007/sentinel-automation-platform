@@ -1,17 +1,18 @@
 {
-  "name": "automation-dashboard",
+  "name": "sentinel-automation-engine",
   "version": "1.0.0",
+  "description": "Enterprise self-healing Playwright automation framework",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "playwright test",
+    "test:ui": "playwright test --ui",
+    "test:e2e": "playwright test tests/e2e",
+    "test:api": "playwright test tests/api",
+    "report": "playwright show-report ../public/playwright-report"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": "",
   "devDependencies": {
-    "@playwright/test": "^1.64.1",
-    "@types/node": "^26.6.5",
-    "typescript": "^7.0.2"
+    "@playwright/test": "^1.49.0",
+    "@types/node": "^22.10.0",
+    "typescript": "^5.7.0"
   }
 }
