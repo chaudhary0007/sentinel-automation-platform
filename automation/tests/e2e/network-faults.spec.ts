@@ -21,9 +21,11 @@ test.describe('Resilience Under Adverse Network Conditions', () => {
   });
 
   test('Simulate high network latency (Slow 3G Simulation)', async ({ page }) => {
-    // Inject a 2.5-second artificial delay on static resources to test loading state
-    await page.route('**/*.png', async (route) => {
-      await new Promise((resolve) => setTimeout(resolve, 2500));
+    // Intercept the main document request and inject an artificial 2500ms delay
+    await page.route('**/', async (route) => {
+      if (route.request().resourceType() === 'document') {
+        await new Promise((resolve) => setTimeout(resolve, 2500));
+      }
       await route.continue();
     });
 
@@ -31,7 +33,7 @@ test.describe('Resilience Under Adverse Network Conditions', () => {
     await page.goto('/');
     const loadTime = Date.now() - startTime;
 
-    // Verify framework handles delayed DOM hydration gracefully
+    // Verify page handled the delay and still hydrated elements properly
     expect(loadTime).toBeGreaterThan(2000);
     await expect(page.locator('[data-test="login-button"]')).toBeVisible();
   });
